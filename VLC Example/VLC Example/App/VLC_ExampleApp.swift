@@ -11,7 +11,7 @@ import SwiftUI
 struct VLC_ExampleApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
         }
     }
 }
