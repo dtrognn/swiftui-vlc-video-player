@@ -10,7 +10,7 @@ import SwiftUI
 struct ImageURL: View {
     let urlString: String
 
-    private var screenWidth = UIScreen.main.bounds.size.width - 2 * AppLayout.standardSpace
+    private var screenWidth = UIScreen.main.bounds.size.width - 2 * AppStyle.layout.standardSpace
 
     init(urlString: String) {
         self.urlString = urlString

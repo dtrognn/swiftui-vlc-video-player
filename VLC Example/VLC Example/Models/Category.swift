@@ -37,6 +37,10 @@ struct Video: Codable, Identifiable {
         case thumb
         case title
     }
+
+    var thumbURL: String {
+        return String(format: "%@%@", baseMediaURL, thumb)
+    }
 }
 
 enum Subtitle: String, Codable {
