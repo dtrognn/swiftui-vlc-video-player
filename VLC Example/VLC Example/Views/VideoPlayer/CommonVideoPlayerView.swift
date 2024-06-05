@@ -37,6 +37,8 @@ public class CommonVideoPlayerViewModel: NSObject, ObservableObject {
     public var onVideoStartPlaying = PassthroughSubject<Void, Never>()
     public var onUpdateFrame = PassthroughSubject<Bool, Never>()
     public var onUpdateThumbnailState = PassthroughSubject<ThumbnailState, Never>()
+    public var onUpdateCurrentTime = CurrentValueSubject<Int, Never>(0)
+    public var onUpdateTotalTime = PassthroughSubject<(String, Double), Never>()
 
     private lazy var mediaPlayer: VLCMediaPlayer = {
         var player = VLCMediaPlayer()
@@ -102,15 +104,15 @@ public class CommonVideoPlayerViewModel: NSObject, ObservableObject {
     }
 
     public func forward() {
-        guard let currentTime = mediaPlayer.time.value as? Int32 else { return }
-        let newValue = currentTime + 10
-        mediaPlayer.time = VLCTime(int: newValue)
+        let time = mediaPlayer.time
+        let newTime = VLCTime(int: time.intValue + 10 * 1000)
+        mediaPlayer.time = newTime
     }
 
     public func backward() {
-        guard let currentTime = mediaPlayer.time.value as? Int32 else { return }
-        let newValue = currentTime - 10
-        mediaPlayer.time = VLCTime(int: newValue)
+        let time = mediaPlayer.time
+        let newTime = VLCTime(int: max(time.intValue - 10 * 1000, 0))
+        mediaPlayer.time = newTime
     }
 
     public func mute() {
@@ -131,6 +133,11 @@ public class CommonVideoPlayerViewModel: NSObject, ObservableObject {
     public func currentTime() -> Int32 {
         guard let currentTime = mediaPlayer.time.value as? Int32 else { return 0 }
         return currentTime
+    }
+
+    public func setCurrentTime(_ seconds: Double) {
+        let milliseconds = Int32(seconds * 1000)
+        mediaPlayer.time = VLCTime(int: milliseconds)
     }
 
     public func setAudio(_ audio: Int) {
@@ -233,6 +240,12 @@ extension CommonVideoPlayerViewModel: VLCMediaPlayerDelegate {
 //            print("AAA mediaPlayerStateChanged playing")
             mediaPlayerState = .playing
             isPlaying = true
+
+            if let totalTime = mediaPlayer.media?.length {
+                let totalString = totalTime.stringValue
+                let totalSecond = Double(totalTime.intValue / 1000)
+                onUpdateTotalTime.send((totalString, totalSecond))
+            }
         case .paused:
 //            print("AAA mediaPlayerStateChanged paused")
             mediaPlayerState = .paused
@@ -260,6 +273,10 @@ extension CommonVideoPlayerViewModel: VLCMediaPlayerDelegate {
             isFirstLoad = false
 //            print("AAA mediaPlayerTimeChanged")
         }
+
+        let currentTime = mediaPlayer.time
+        let currentSeconds = Int(currentTime.intValue / 1000)
+        onUpdateCurrentTime.send(currentSeconds)
     }
 
     public func mediaPlayerSnapshot(_ aNotification: Notification) {
