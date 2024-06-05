@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <!-- ATS được tắt cho toàn bộ ứng dụng -->
+        <key>NSAppTransportSecurity</key>
+        <dict>
+            <key>NSAllowsArbitraryLoads</key>
+            <true/>
+        </dict>
+
+        <!-- Các exceptions cho các domain cụ thể -->
+        <key>NSExceptionDomains</key>
+        <dict>
+            <!-- Domain cụ thể cho phép sử dụng HTTP -->
+            <key>commondatastorage.googleapis.com</key>
+            <dict>
+                <!-- Bao gồm tất cả các subdomain của example.com -->
+                <key>NSIncludesSubdomains</key>
+                <true/>
+                <!-- Cho phép kết nối HTTP -->
+                <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <!-- Thiết lập phiên bản tối thiểu của TLS (nếu cần) -->
+                <!-- <key>NSTemporaryExceptionMinimumTLSVersion</key>
+                <string>TLSv1.1</string> -->
+            </dict>
+        </dict>
+    </dict>
+    </plist>
