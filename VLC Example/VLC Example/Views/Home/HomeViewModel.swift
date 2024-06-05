@@ -11,10 +11,6 @@ class HomeViewModel: ObservableObject {
     @Published var category: Category = .init()
 
     init() {
-        loadData()
-    }
-
-    func loadData() {
         loadVideos()
     }
 
