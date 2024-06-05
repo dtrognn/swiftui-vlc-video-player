@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject private var router: Router
     @StateObject private var vm = HomeViewModel()
 
     var body: some View {
@@ -20,8 +21,10 @@ struct HomeView: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: AppStyle.layout.standardSpace) {
                         ForEach(vm.category.videos) { video in
-                            VideoItemView(video: video) { _ in
-                                //
+                            VideoItemView(video: video) { videoSelected in
+                                if let url = videoSelected.sources.first {
+                                    router.navigate(to: RouterDestination.videoPlayer(url))
+                                }
                             }
                         }
                     }.padding(.horizontal, AppStyle.layout.standardSpace)
